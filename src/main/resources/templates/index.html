@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <Title>My files</Title>
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
+    <link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+<body>
+    <div th:replace="header :: header"></div>
+    <div class="container-fluid mt-2">
+        <table  class="table table-bordered table-hover horizontal-align">
+            <thead>
+            <tr>
+                <th style = "width: 15%">Filename</th>
+                <th style = "width: 25%">Author</th>
+                <th style = "width: 35%">Comment</th>
+                <th style = "width: 10%">Date</th>
+                <th style = "width: 3%">Edit</th>
+                <th style = "width: 3%">Down</th>
+                <th style = "width: 3%">Del</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="file : ${files}">
+                <td th:text="${file.fileName}">FileName</td>
+                <td th:text="${file.author}">Author</td>
+                <td th:text="${file.comment}">Comment</td>
+                <td th:text="${#dates.format(file.placedAt, 'dd-MMM-yyyy HH:mm')}" style="text-align: center">Date</td>
+                <td style="text-align: center"><a th:href="@{'/edit/{id}'(id=${file.id})}"><i class="fa fa-edit text-primate" style="font-size:15px"></i></a></td>
+                <td style="text-align: center"><a th:href="@{'/download/{id}'(id=${file.id})}"><i class="fa fa-arrow-circle-down text-success" style="font-size:15px"></i></a></td>
+                <td style="text-align: center"><a th:href="@{'/delete/{id}'(id=${file.id})}"><i class="fa fa-minus-circle text-danger" style="font-size:15px"></i></a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
