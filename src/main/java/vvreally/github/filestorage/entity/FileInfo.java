@@ -17,9 +17,4 @@ public class FileInfo {
     private String comment = "";
 
     private Date placedAt;
-
-    @PrePersist
-    void placedAt() {
-        this.placedAt = new Date();
-    }
 }

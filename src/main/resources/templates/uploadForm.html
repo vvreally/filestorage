@@ -7,6 +7,9 @@
     <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
     <link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen" />
     <script src="../static/js/jquery-3.4.1.min.js" th:src="@{/js/jquery-3.4.1.min.js}"></script>
+    <script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
     <script>
         function ValidateSize(file) {
             var FileSize = file.files[0].size;
@@ -14,29 +17,54 @@
                 alert("Maximum file size exceeded. Maximum file size is 10MB");
                 $(file).val(''); //for clearing with Jquery
             }
+            else {
+                $("#fileName").attr({"value": file.files[0].name});
+            }
         }
+    </script>
+    <script>
+        $(document).ready(function(){
+            var date_input=$('input[name="date"]'); //our date input has the name "date"
+            var container= $('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+            date_input.datepicker({
+                format: 'dd/mm/yyyy',
+                container: container,
+                todayHighlight: true,
+                autoclose: true
+            })
+        })
     </script>
 </head>
 <body>
 <div th:replace="header :: header"></div>
 <div class="container mt-2">
     <form class="form-horizontal" method="POST" enctype="multipart/form-data" id="fileUploadForm">
-        <div class="form-group">
-            <label for="fileupload">Choose file: </label>
-            <input type="file" class="form-control-file" id="fileupload" placeholder="Upload File"  name="uploadFile" aria-describedby="uploadHelp" onchange="ValidateSize(this)" required>
-            <small id="uploadHelp" class="form-text text-muted">Maximum file size is 10MB</small>
+        <div class="row">
+            <div class="col">
+                <label for="fileName">Filename: </label>
+                <input type="text" class="form-control" id="fileName" name="fileName" th:name="fileName" readonly>
+            </div>
+            <div class="col">
+                <label for="fileupload">Choose file: </label>
+                <input type="file" class="form-control-file" id="fileupload" placeholder="Upload File"  name="uploadFile" th:name="uploadFile" aria-describedby="uploadHelp" onchange="ValidateSize(this)" required>
+                <small id="uploadHelp" class="form-text text-muted">Maximum file size is 10MB</small>
+            </div>
         </div>
         <div class="form-group">
-            <label for="author" >Author: </label>
-            <input type="text" class="form-control" id="author" placeholder="Write the author" th:field="${fileInfo.author}" maxlength="255" aria-describedby="authorHelp">
+            <label for="author">New author: </label>
+            <input type="text" class="form-control" id="author" th:name="author" placeholder="Write the author" maxlength="255" aria-describedby="authorHelp">
             <small id="authorHelp" class="form-text text-muted">Field can be empty but maximum length is 255.</small>
         </div>
         <div class="form-group">
-            <label for="comment" >Comment: </label>
-            <input type="text" class="form-control" id="comment" placeholder="Write a comment" th:field="${fileInfo.comment}" maxlength="255" aria-describedby="commentHelp">
-            <small id="commentHelp" class="form-text text-muted">Field can be empty but maximum length is 255.</small>
+            <label for="author">New comment: </label>
+            <input type="text" class="form-control" id="comment" th:name="comment" placeholder="Write a comment" maxlength="255" aria-describedby="commentHelp">
+            <small id="commentHelp" class="form-text text-muted">Field can be empty but maximum is 255.</small>
         </div>
-        <button type="submit" class="btn btn-primary" id="btnSubmit">Upload</button>
+        <div class="form-group">
+            <label for="date">New date: </label>
+            <input type="text" class="form-control" id="date" name="date" th:name="date" placeholder="DD/MM/YYYY" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
 </body>

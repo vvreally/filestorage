@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import vvreally.github.filestorage.services.ControllersServices;
 
 import java.util.Optional;
 
@@ -20,11 +21,13 @@ public class FilesController {
 
     private FileInfoRepository fileInfoRepository;
     private FileStorage fileStorage;
+    private ControllersServices services;
 
     @Autowired
-    public FilesController(FileInfoRepository fileInfoRepository, FileStorage fileStorage) {
+    public FilesController(FileInfoRepository fileInfoRepository, FileStorage fileStorage, ControllersServices services) {
         this.fileInfoRepository = fileInfoRepository;
         this.fileStorage = fileStorage;
+        this.services = services;
     }
 
     @GetMapping("/")
@@ -32,22 +35,6 @@ public class FilesController {
         model.addAttribute("files", fileInfoRepository.findAllByOrderByPlacedAtAsc());
         return "index.html";
     }
-
-    @GetMapping("/delete/{id}")
-    public String deleteFile(@PathVariable long id, Model model) {
-        Optional<FileInfo> fileCheck = fileInfoRepository.findById(id);
-        if (fileCheck.isPresent()) { //If true then delete file from local storage and database
-            FileInfo file = fileCheck.get();
-            log.info("Delete: " + file);
-            fileStorage.delete(file.getFileName());
-            fileInfoRepository.delete(file);
-            return "redirect:/";
-        }
-        else {
-            return "redirect:/notFound/" + id;
-        }
-    }
-
 
     @GetMapping("/download/{id}")
     public ResponseEntity<Resource> downloadFile(@PathVariable Long id) {
@@ -65,6 +52,20 @@ public class FilesController {
             log.warn("No file with id = " + id);
             return ResponseEntity.notFound().build(); //404
         }
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteFile(@PathVariable long id, Model model) {
+        Optional<FileInfo> fileCheck = fileInfoRepository.findById(id);
+        if (fileCheck.isPresent()) { //If true then delete file from local storage and database
+            FileInfo file = fileCheck.get();
+            log.info("Delete: " + file);
+            fileStorage.delete(file.getFileName());
+            fileInfoRepository.delete(file);
+            return "redirect:/";
+        }
+        else
+            return services.notFound(id);
     }
 
     @GetMapping("/notFound/{id}")
